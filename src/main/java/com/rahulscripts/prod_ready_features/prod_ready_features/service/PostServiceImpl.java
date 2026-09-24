@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.awt.geom.RectangularShape;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +41,15 @@ public class PostServiceImpl implements PostService {
                 .findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));
         return modelMapper.map(postEntity, PostDto.class);
+    }
+
+    @Override
+    public PostDto updatePostById(PostDto postDto,Long postId) {
+        PostEntity oldEntity = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+        postDto.setId(postId);
+        modelMapper.map(postDto,oldEntity);
+        PostEntity newPostEntity = postRepository.save(oldEntity);
+        return modelMapper.map(newPostEntity,PostDto.class);
     }
 
 
